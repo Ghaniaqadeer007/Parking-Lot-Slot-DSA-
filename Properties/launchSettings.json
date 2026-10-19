@@ -1,12 +1,15 @@
 {
   "profiles": {
-    "Next.js Development Server (React)": {
+    "ParkFlow Next.js (React Web App)": {
       "commandName": "Executable",
-      "executablePath": "npm.cmd",
-      "commandLineArgs": "run dev",
+      "executablePath": "cmd.exe",
+      "commandLineArgs": "/c start-dev.cmd",
       "workingDirectory": ".",
       "launchBrowser": true,
       "launchUrl": "http://localhost:3000"
+    },
+    "ParkingLotSlotAllocator (Desktop App)": {
+      "commandName": "Project"
     }
   }
 }
