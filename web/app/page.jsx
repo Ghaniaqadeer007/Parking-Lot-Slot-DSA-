@@ -1,316 +1,327 @@
 'use client';
 
-import React, { useState } from 'react';
-import WarpText from '../components/WarpText';
+import React, { useState, useEffect, useRef } from 'react';
 
-export default function CoverPage() {
-  const [activeTab, setActiveTab] = useState('cover');
+const COLS = ['#FFFFFF', '#242831', '#3E6F4B', '#8E95A1', '#F7DF94', '#14171C'];
+
+function renderCarSvg(c) {
+  return (
+    <svg viewBox="0 0 44 22" style={{ width: '100%', height: '100%', display: 'block' }}>
+      <rect x="1" y="2" width="42" height="18" rx="6.5" fill={c} stroke="rgba(20,23,28,.28)" strokeWidth=".7" />
+      <rect x="11" y="4.5" width="18" height="13" rx="3.5" fill="#14171C" opacity=".9" />
+      <path d="M29 5.2 35.5 8v6L29 16.8z" fill="#cfd9e6" />
+      <path d="M12 5.2 7.5 8v6L12 16.8z" fill="#cfd9e6" opacity=".85" />
+      <rect x="39.5" y="3.4" width="3.6" height="3.6" rx="1.2" fill="#fff6c0" />
+      <rect x="39.5" y="15" width="3.6" height="3.6" rx="1.2" fill="#fff6c0" />
+      <rect x="1" y="3.4" width="2.6" height="3.6" rx="1" fill="#ff8a96" />
+      <rect x="1" y="15" width="2.6" height="3.6" rx="1" fill="#ff8a96" />
+    </svg>
+  );
+}
+
+export default function ParkFlowApp() {
+  const [currentPage, setCurrentPage] = useState('cover'); // 'cover' or 'details'
+  const [wipeClass, setWipeClass] = useState('wipe');
+  const [color, setColor] = useState(COLS[0]);
+  const [plate, setPlate] = useState('');
+  const [owner, setOwner] = useState('');
+  const [phone, setPhone] = useState('');
+  const [plateError, setPlateError] = useState('');
+  const [ownerError, setOwnerError] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastOn, setToastOn] = useState(false);
+
+  const dispRef = useRef(null);
+  const turbRef = useRef(null);
+  const boostRef = useRef(0);
+  const toastTimeoutRef = useRef(null);
+
+  // Warp text liquid displacement loop
+  useEffect(() => {
+    let animId;
+    const t0 = performance.now();
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function warpLoop(now) {
+      const t = (now - t0) / 1000;
+      const intro = Math.max(0, 95 * Math.exp(-(t - 0.1) * 1.25));
+      const idle = 3.2 + 1.6 * Math.sin(t * 1.4);
+      boostRef.current *= 0.94;
+      const amp = reduce ? 0 : (t < 0.1 ? 95 : intro + idle + boostRef.current);
+
+      if (dispRef.current) {
+        dispRef.current.setAttribute('scale', amp.toFixed(2));
+      }
+      if (turbRef.current) {
+        turbRef.current.setAttribute(
+          'baseFrequency',
+          (0.010 + 0.004 * Math.sin(t * 0.9)).toFixed(4) + ' ' + (0.045 + 0.01 * Math.cos(t * 0.7)).toFixed(4)
+        );
+      }
+      animId = requestAnimationFrame(warpLoop);
+    }
+
+    animId = requestAnimationFrame(warpLoop);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  const handlePageTransition = (targetPage) => {
+    setWipeClass('wipe in');
+    setTimeout(() => {
+      setCurrentPage(targetPage);
+      setWipeClass('wipe out');
+    }, 560);
+    setTimeout(() => {
+      setWipeClass('wipe');
+    }, 1200);
+  };
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setToastOn(true);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastOn(false);
+    }, 2600);
+  };
+
+  const handlePlateChange = (e) => {
+    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9 -]/g, '');
+    setPlate(val);
+    setPlateError('');
+  };
+
+  const handleOwnerChange = (e) => {
+    setOwner(e.target.value);
+    setOwnerError('');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let ok = true;
+    const p = plate.trim();
+    const PL = /^[A-Z0-9][A-Z0-9 -]{1,8}[A-Z0-9]$/;
+
+    if (!PL.test(p)) {
+      setPlateError('Enter a plate with 3 to 10 letters or numbers.');
+      ok = false;
+    }
+    if (owner.trim().length < 2) {
+      setOwnerError('Please enter the owner name.');
+      ok = false;
+    }
+    if (!ok) return;
+
+    try {
+      sessionStorage.setItem('parkflow_car', JSON.stringify({
+        plate: p,
+        owner: owner.trim(),
+        phone: phone.trim(),
+        colour: color
+      }));
+    } catch (_) {}
+
+    showToast('Saved. Next page: choose your slot (not built in this sample).');
+  };
 
   return (
-    <main style={{
-      minHeight: '100vh',
-      backgroundColor: '#FBF8F3', // Warm Ivory Canvas
-      fontFamily: '"Segoe UI", system-ui, -apple-system, sans-serif',
-      color: '#261517',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      padding: '24px 48px',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Ambient background glows */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        width: '500px',
-        height: '500px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(114, 47, 55, 0.08) 0%, transparent 70%)',
-        pointerEvents: 'none'
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-10%',
-        left: '-5%',
-        width: '450px',
-        height: '450px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(183, 168, 154, 0.12) 0%, transparent 70%)',
-        pointerEvents: 'none'
-      }} />
+    <>
+      {/* SVG Liquid Filter */}
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <filter id="warp" x="-15%" y="-40%" width="130%" height="180%">
+          <feTurbulence ref={turbRef} id="turb" type="fractalNoise" baseFrequency="0.010 0.045" numOctaves="2" seed="4" result="n" />
+          <feDisplacementMap ref={dispRef} id="disp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </svg>
 
-      {/* Top Navigation */}
-      <header style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        zIndex: 10
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
-            backgroundColor: '#722F37', // Deep Burgundy
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#FFFFFF',
-            fontWeight: 'bold',
-            fontSize: '18px',
-            boxShadow: '0 4px 12px rgba(114, 47, 55, 0.2)'
-          }}>
-            P
-          </div>
-          <div>
-            <div style={{ fontFamily: 'Georgia, serif', fontWeight: 'bold', fontSize: '18px', color: '#722F37' }}>
-              PARKFLOW
-            </div>
-            <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#B7A89A', letterSpacing: '0.05em' }}>
-              DSA ALLOCATOR SUITE
-            </div>
-          </div>
+      {/* Shared Background */}
+      <div className="bg">
+        <div className="blob a" />
+        <div className="blob b" />
+      </div>
+
+      {/* Top Bar */}
+      <div className="top">
+        <div className="mark">
+          <i>P</i>ParkFlow
         </div>
+      </div>
 
-        <div style={{
-          backgroundColor: '#E8DCC6', // Mocha Cream
-          padding: '8px 18px',
-          borderRadius: '20px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          color: '#722F37',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          border: '1px solid rgba(183, 168, 154, 0.5)'
-        }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#337046' }} />
-          SYSTEM READY • MIN-HEAP ACTIVE
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section style={{
-        display: 'grid',
-        gridTemplateColumns: '1.1fr 1fr',
-        gap: '40px',
-        alignItems: 'center',
-        margin: 'auto 0',
-        zIndex: 10
-      }}>
-        {/* Left Column: Heading with WarpText */}
-        <div>
-          <div style={{
-            display: 'inline-block',
-            backgroundColor: '#E8DCC6',
-            color: '#722F37',
-            padding: '6px 16px',
-            borderRadius: '16px',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            marginBottom: '16px',
-            border: '1px solid #B7A89A'
-          }}>
-            ✦ REACT BITS WEBGL REFRACTION • COSMIC LATTE & BURGUNDY
+      {/* ================= COVER PAGE ================= */}
+      <main className={`page cover ${currentPage === 'cover' ? 'on' : ''}`}>
+        <div className="hero">
+          <div className="kicker">
+            <b />Smart parking, simplified
           </div>
 
-          {/* MAIN HEADING WITH WARPTEXT INTEGRATION */}
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            height: '180px',
-            margin: '0 0 10px 0',
-            cursor: 'crosshair'
-          }}>
-            <WarpText
-              text={"PARKING LOT\nSLOT ALLOCATER"}
-              color="#722F37"
-              warpStrength={0.08}
-              warpScale={1.7}
-              speed={0.55}
-              lens="bulge"
-              pointerInfluence={0.42}
-              pointerStrength={0.38}
-              refraction={0.018}
-              chromatic={0.35}
-              idleDrift={0.2}
-              ripple
-              clickRipple
-              intro
-              fontSize="clamp(2.5rem, 5.2vw, 4.2rem)"
-              fontWeight={800}
-              fontFamily="Georgia, serif"
-              letterSpacing="-0.02em"
-              lineHeight={1.05}
-              style={{ width: '100%', height: '180px' }}
-            />
-          </div>
+          <h1
+            className="brand"
+            aria-label="ParkFlow"
+            onMouseEnter={() => { boostRef.current = 55; }}
+            onClick={() => { boostRef.current = 80; }}
+            style={{ cursor: 'pointer' }}
+          >
+            {'ParkFlow'.split('').map((ch, i) => (
+              <span
+                key={i}
+                className={i >= 4 ? 'flow' : ''}
+                style={{
+                  animationDelay: `${0.35 + i * 0.09}s, ${1.5 + i * 0.18}s`
+                }}
+              >
+                {ch}
+              </span>
+            ))}
+          </h1>
 
-          <p style={{
-            fontSize: '15px',
-            lineHeight: 1.6,
-            color: '#5D4F4B',
-            maxWidth: '520px',
-            marginBottom: '28px'
-          }}>
-            An intelligent, high-speed parking lot slot allocation system engineered for maximum efficiency. Powered by Min-Heap priority queues for instant nearest bay routing, O(1) hash indexing, and real-time WebGL interactive visuals.
+          <p className="sub">Parking Lot Slot Allocator</p>
+          <div className="rule" />
+          <p className="line">
+            Skip the circling. <em>Your spot is already waiting</em>, and we&apos;ll show you the way there.
           </p>
 
-          <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-            <button style={{
-              backgroundColor: '#722F37',
-              color: '#FFFFFF',
-              border: 'none',
-              padding: '14px 28px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              fontSize: '15px',
-              cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(114, 47, 55, 0.25)',
-              transition: 'transform 0.2s, background-color 0.2s'
-            }}>
-              🚀 Launch Slot Allocator →
+          <div className="cta">
+            <button className="btn" onClick={() => handlePageTransition('details')}>
+              Enter car details
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </button>
-
-            <button style={{
-              backgroundColor: '#FFFFFF',
-              color: '#722F37',
-              border: '1.5px solid #E8DCC6',
-              padding: '14px 24px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              fontSize: '15px',
-              cursor: 'pointer'
-            }}>
-              🧠 Explore DSA Specs
-            </button>
-          </div>
-
-          {/* DSA Feature Badges */}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
-            <div style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E8DCC6',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              flex: 1
-            }}>
-              <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#722F37' }}>⚡ Min-Heap</div>
-              <div style={{ fontSize: '11px', color: '#B7A89A', marginTop: '2px' }}>O(log N) Nearest Bay</div>
-            </div>
-            <div style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E8DCC6',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              flex: 1
-            }}>
-              <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#722F37' }}>🔍 Hash Table</div>
-              <div style={{ fontSize: '11px', color: '#B7A89A', marginTop: '2px' }}>O(1) Plate Resolution</div>
-            </div>
-            <div style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E8DCC6',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              flex: 1
-            }}>
-              <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#337046' }}>⏳ FIFO Queue</div>
-              <div style={{ fontSize: '11px', color: '#B7A89A', marginTop: '2px' }}>Zero-Collision Buffer</div>
-            </div>
           </div>
         </div>
 
-        {/* Right Column: Live Simulation Card */}
-        <div style={{
-          backgroundColor: '#FFFFFF',
-          borderRadius: '20px',
-          padding: '24px',
-          border: '1.5px solid #E8DCC6',
-          boxShadow: '0 12px 36px rgba(60, 40, 42, 0.08)'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div>
-              <div style={{ fontFamily: 'Georgia, serif', fontWeight: 'bold', fontSize: '16px', color: '#722F37' }}>
-                Live Parking Simulation
-              </div>
-              <div style={{ fontSize: '12px', color: '#B7A89A' }}>
-                Real-time Min-Heap slot assignment visualizer
-              </div>
-            </div>
-            <div style={{
-              backgroundColor: '#E8DCC6',
-              color: '#722F37',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              padding: '4px 10px',
-              borderRadius: '12px'
-            }}>
-              ● LIVE
-            </div>
-          </div>
-
-          {/* Graphical parking bays preview */}
-          <div style={{
-            backgroundColor: '#F3EDE4',
-            borderRadius: '12px',
-            padding: '20px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '12px',
-            border: '1px solid #E8DCC6'
-          }}>
-            {['A-01 (Occupied)', 'A-02 (EV Available)', 'A-03 (Allocated)', 'B-01 (Available)', 'B-02 (Occupied)', 'B-03 (VIP)'].map((slot, i) => (
-              <div key={i} style={{
-                backgroundColor: i === 0 || i === 4 ? '#FFFFFF' : '#E8DCC6',
-                border: '1px solid ' + (i === 2 ? '#722F37' : '#B7A89A'),
-                borderRadius: '8px',
-                padding: '12px',
-                textAlign: 'center',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: i === 2 ? '#722F37' : '#261517'
-              }}>
-                {slot}
-              </div>
+        {/* Road Strip with Driving Car */}
+        <div className="strip" aria-hidden="true">
+          <div className="bays">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+              <i key={num} className={num === 5 ? 'mine' : ''}>
+                <b>{String(num).padStart(2, '0')}</b>
+              </i>
             ))}
           </div>
-
-          <div style={{
-            marginTop: '16px',
-            padding: '12px 16px',
-            backgroundColor: '#FBF8F3',
-            borderRadius: '8px',
-            fontSize: '12px',
-            color: '#5D4F4B',
-            border: '1px solid #E8DCC6',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <span style={{ color: '#722F37' }}>⚡</span>
-            <span>Allocating nearest slot (Min-Heap): <strong>Slot A-03</strong> assigned to vehicle.</span>
+          <div className="road" />
+          <div className="car" style={{ '--stop': 'calc(50vw - 48px)' }}>
+            {renderCarSvg('#FFFFFF')}
           </div>
+        </div>
+      </main>
+
+      {/* ================= CAR DETAILS PAGE ================= */}
+      <section className={`page details ${currentPage === 'details' ? 'on' : ''}`}>
+        <div className="card">
+          <form className="form" onSubmit={handleSubmit} noValidate>
+            <div className="step">
+              Step 1 of 4 <span className="dots"><i className="on" /><i /><i /><i /></span>
+            </div>
+            <h2>Your car</h2>
+            <p className="hint">Tell us about your car. Next you will pick a slot.</p>
+
+            <div className="f">
+              <label htmlFor="plate">Plate number *</label>
+              <input
+                type="text"
+                id="plate"
+                value={plate}
+                onChange={handlePlateChange}
+                placeholder="e.g. LEA-101"
+                maxLength={12}
+                autoComplete="off"
+                className={plateError ? 'bad' : ''}
+              />
+              {plateError && <div className="err">{plateError}</div>}
+            </div>
+
+            <div className="f">
+              <label htmlFor="owner">Owner name *</label>
+              <input
+                type="text"
+                id="owner"
+                value={owner}
+                onChange={handleOwnerChange}
+                placeholder="e.g. Ali Raza"
+                maxLength={40}
+                autoComplete="off"
+                className={ownerError ? 'bad' : ''}
+              />
+              {ownerError && <div className="err">{ownerError}</div>}
+            </div>
+
+            <div className="f">
+              <label htmlFor="phone">Phone (optional)</label>
+              <input
+                type="tel"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. 0300 1234567"
+                maxLength={16}
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="f">
+              <label>Car colour</label>
+              <div className="sw">
+                {COLS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    style={{ background: c }}
+                    title={c}
+                    aria-label={`Colour ${c}`}
+                    className={color === c ? 'on' : ''}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+
+                <button
+                  type="button"
+                  className={`custom ${!COLS.includes(color) ? 'on' : ''}`}
+                  title="Custom colour"
+                  aria-label="Custom colour"
+                >
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                  />
+                </button>
+                <small>or pick any colour</small>
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                type="button"
+                className="btn ghost"
+                onClick={() => handlePageTransition('cover')}
+              >
+                Back
+              </button>
+              <button type="submit" className="btn">
+                Choose my slot
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </button>
+            </div>
+          </form>
+
+          <aside className="side" aria-label="Car preview">
+            <div className="bay">
+              {renderCarSvg(color)}
+            </div>
+            <div className="cap">
+              <span className="plate">{plate || 'YOUR PLATE'}</span>
+              <div className="own">{owner}</div>
+            </div>
+          </aside>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: '16px',
-        borderTop: '1px solid #E8DCC6',
-        fontSize: '12px',
-        color: '#8E7E76',
-        zIndex: 10
-      }}>
-        <div>⚡ React Bits &lt;WarpText /&gt; • C# .NET 8 WinForms Solution • Visual Studio Ready</div>
-        <div style={{ fontWeight: 'bold', color: '#722F37' }}>Cosmic Latte, Mocha Cream &amp; Deep Burgundy Theme</div>
-      </footer>
-    </main>
+      {/* Wipe Screen Transition */}
+      <div className={wipeClass} />
+
+      {/* Toast Notification */}
+      <div className={`toast ${toastOn ? 'on' : ''}`}>
+        {toastMessage}
+      </div>
+    </>
   );
 }

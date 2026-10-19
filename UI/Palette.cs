@@ -6,7 +6,20 @@ using System.Drawing.Drawing2D;
 public static class Palette
 {
     // ==========================================
-    // EXACT THEME COLORS FROM USER PALETTE
+    // EXACT THEME COLORS FROM PARKFLOW USER HTML
+    // ==========================================
+    public static readonly Color Greige = Color.FromArgb(211, 203, 193);     // #D3CBC1
+    public static readonly Color Slate = Color.FromArgb(36, 40, 49);        // #242831
+    public static readonly Color Ash = Color.FromArgb(142, 149, 161);       // #8E95A1
+    public static readonly Color ParkGreen = Color.FromArgb(62, 111, 75);   // #3E6F4B
+    public static readonly Color Black = Color.FromArgb(20, 23, 28);        // #14171C
+    public static readonly Color Amber = Color.FromArgb(247, 223, 148);     // #F7DF94
+    public static readonly Color Ink = Color.FromArgb(20, 23, 28);          // #14171C
+    public static readonly Color Muted = Color.FromArgb(86, 93, 106);       // #565D6A
+    public static readonly Color Line = Color.FromArgb(203, 205, 210);      // #CBCDD2
+
+    // ==========================================
+    // PREVIOUS THEME COLORS
     // ==========================================
     // 1. Cosmic Latte: #B7A89A, RGB(183, 168, 154)
     public static readonly Color CosmicLatte = Color.FromArgb(183, 168, 154);
