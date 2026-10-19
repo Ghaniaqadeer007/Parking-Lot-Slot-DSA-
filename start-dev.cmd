@@ -9,5 +9,8 @@ set "PATH=C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsof
 
 cd /d "%~dp0"
 
+:: Automatically launch browser window to the project URL
+start http://localhost:3000
+
 :: Start Next.js development server
 call "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VisualStudio\NodeJs\npm.cmd" run dev
