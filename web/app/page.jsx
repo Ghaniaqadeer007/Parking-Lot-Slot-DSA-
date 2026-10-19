@@ -150,10 +150,6 @@ export default function ParkFlowApp() {
       {/* ================= COVER PAGE ================= */}
       <main className={`page cover ${currentPage === 'cover' ? 'on' : ''}`}>
         <div className="hero">
-          <div className="kicker">
-            <b />Smart parking, simplified
-          </div>
-
           <h1
             className="brand"
             aria-label="ParkFlow"

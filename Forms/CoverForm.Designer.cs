@@ -18,9 +18,6 @@ partial class CoverForm
 
     // Center Hero
     private Panel panelHeroCenter;
-    private Panel panelKicker;
-    private Panel panelBlinkDot;
-    private Label lblKickerText;
     private Panel panelTitleContainer;
     private Label lblTitlePark;
     private Label lblTitleFlow;
@@ -55,9 +52,6 @@ partial class CoverForm
         this.btnClose = new Button();
 
         this.panelHeroCenter = new Panel();
-        this.panelKicker = new Panel();
-        this.panelBlinkDot = new Panel();
-        this.lblKickerText = new Label();
         this.panelTitleContainer = new Panel();
         this.lblTitlePark = new Label();
         this.lblTitleFlow = new Label();
@@ -75,18 +69,17 @@ partial class CoverForm
         this.panelTopBar.SuspendLayout();
         this.panelLogoMark.SuspendLayout();
         this.panelHeroCenter.SuspendLayout();
-        this.panelKicker.SuspendLayout();
         this.panelTitleContainer.SuspendLayout();
         this.panelBottomStrip.SuspendLayout();
         this.panelRoad.SuspendLayout();
         this.SuspendLayout();
 
         // 
-        // Form Configuration
+        // Form Configuration - Enlarged frame so everything fits neatly with generous breathing room
         // 
         this.AutoScaleMode = AutoScaleMode.Dpi;
-        this.ClientSize = new Size(1220, 780);
-        this.MinimumSize = new Size(1000, 680);
+        this.ClientSize = new Size(1320, 860);
+        this.MinimumSize = new Size(1100, 750);
         this.StartPosition = FormStartPosition.CenterScreen;
         this.FormBorderStyle = FormBorderStyle.None;
         this.BackColor = Palette.Greige;
@@ -96,9 +89,9 @@ partial class CoverForm
         // panelTopBar
         // 
         this.panelTopBar.Dock = DockStyle.Top;
-        this.panelTopBar.Height = 72;
+        this.panelTopBar.Height = 76;
         this.panelTopBar.BackColor = Color.Transparent;
-        this.panelTopBar.Padding = new Padding(36, 0, 36, 0);
+        this.panelTopBar.Padding = new Padding(40, 0, 40, 0);
         this.panelTopBar.Controls.Add(this.panelLogoMark);
         this.panelTopBar.Controls.Add(this.lblBrandName);
         this.panelTopBar.Controls.Add(this.btnMin);
@@ -107,7 +100,7 @@ partial class CoverForm
         // 
         // panelLogoMark (34x34 Slate pill)
         // 
-        this.panelLogoMark.Location = new Point(36, 19);
+        this.panelLogoMark.Location = new Point(40, 21);
         this.panelLogoMark.Size = new Size(34, 34);
         this.panelLogoMark.BackColor = Palette.Slate;
         this.panelLogoMark.Controls.Add(this.lblLogoMarkText);
@@ -125,7 +118,7 @@ partial class CoverForm
         // lblBrandName
         // 
         this.lblBrandName.AutoSize = true;
-        this.lblBrandName.Location = new Point(80, 22);
+        this.lblBrandName.Location = new Point(86, 24);
         this.lblBrandName.Text = "ParkFlow";
         this.lblBrandName.Font = new Font("Georgia", 18F, FontStyle.Bold);
         this.lblBrandName.ForeColor = Palette.Black;
@@ -134,7 +127,7 @@ partial class CoverForm
         // btnClose
         // 
         this.btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        this.btnClose.Location = new Point(1168, 18);
+        this.btnClose.Location = new Point(1264, 20);
         this.btnClose.Size = new Size(36, 36);
         this.btnClose.FlatStyle = FlatStyle.Flat;
         this.btnClose.FlatAppearance.BorderSize = 0;
@@ -148,7 +141,7 @@ partial class CoverForm
         // btnMin
         // 
         this.btnMin.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        this.btnMin.Location = new Point(1124, 18);
+        this.btnMin.Location = new Point(1220, 20);
         this.btnMin.Size = new Size(36, 36);
         this.btnMin.FlatStyle = FlatStyle.Flat;
         this.btnMin.FlatAppearance.BorderSize = 0;
@@ -159,13 +152,12 @@ partial class CoverForm
         this.btnMin.Cursor = Cursors.Hand;
 
         // 
-        // panelHeroCenter
+        // panelHeroCenter - Perfectly centered vertically and horizontally
         // 
         this.panelHeroCenter.Anchor = AnchorStyles.None;
-        this.panelHeroCenter.Size = new Size(880, 480);
-        this.panelHeroCenter.Location = new Point((this.ClientSize.Width - 880) / 2, 85);
+        this.panelHeroCenter.Size = new Size(960, 420);
+        this.panelHeroCenter.Location = new Point((this.ClientSize.Width - 960) / 2, 175);
         this.panelHeroCenter.BackColor = Color.Transparent;
-        this.panelHeroCenter.Controls.Add(this.panelKicker);
         this.panelHeroCenter.Controls.Add(this.panelTitleContainer);
         this.panelHeroCenter.Controls.Add(this.lblSubtitle);
         this.panelHeroCenter.Controls.Add(this.panelGreenRule);
@@ -173,36 +165,10 @@ partial class CoverForm
         this.panelHeroCenter.Controls.Add(this.btnEnterDetails);
 
         // 
-        // panelKicker (Smart parking, simplified pill)
+        // panelTitleContainer ("ParkFlow" centered prominently with large typography)
         // 
-        this.panelKicker.Size = new Size(240, 32);
-        this.panelKicker.Location = new Point((880 - 240) / 2, 20);
-        this.panelKicker.BackColor = Color.FromArgb(235, 255, 255, 255);
-        this.panelKicker.Controls.Add(this.panelBlinkDot);
-        this.panelKicker.Controls.Add(this.lblKickerText);
-
-        // 
-        // panelBlinkDot
-        // 
-        this.panelBlinkDot.Location = new Point(14, 12);
-        this.panelBlinkDot.Size = new Size(8, 8);
-        this.panelBlinkDot.BackColor = Palette.ParkGreen;
-
-        // 
-        // lblKickerText
-        // 
-        this.lblKickerText.Location = new Point(28, 0);
-        this.lblKickerText.Size = new Size(205, 32);
-        this.lblKickerText.Text = "SMART PARKING, SIMPLIFIED";
-        this.lblKickerText.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-        this.lblKickerText.ForeColor = Palette.Black;
-        this.lblKickerText.TextAlign = ContentAlignment.MiddleLeft;
-
-        // 
-        // panelTitleContainer ("ParkFlow" with two colors)
-        // 
-        this.panelTitleContainer.Size = new Size(600, 110);
-        this.panelTitleContainer.Location = new Point((880 - 600) / 2, 65);
+        this.panelTitleContainer.Size = new Size(680, 115);
+        this.panelTitleContainer.Location = new Point((960 - 680) / 2, 10);
         this.panelTitleContainer.BackColor = Color.Transparent;
         this.panelTitleContainer.Controls.Add(this.lblTitlePark);
         this.panelTitleContainer.Controls.Add(this.lblTitleFlow);
@@ -211,54 +177,54 @@ partial class CoverForm
         // lblTitlePark
         // 
         this.lblTitlePark.AutoSize = true;
-        this.lblTitlePark.Location = new Point(60, 5);
+        this.lblTitlePark.Location = new Point(110, 5);
         this.lblTitlePark.Text = "Park";
-        this.lblTitlePark.Font = new Font("Georgia", 64F, FontStyle.Bold);
+        this.lblTitlePark.Font = new Font("Georgia", 68F, FontStyle.Bold);
         this.lblTitlePark.ForeColor = Palette.Slate;
 
         // 
         // lblTitleFlow
         // 
         this.lblTitleFlow.AutoSize = true;
-        this.lblTitleFlow.Location = new Point(310, 5);
+        this.lblTitleFlow.Location = new Point(345, 5);
         this.lblTitleFlow.Text = "Flow";
-        this.lblTitleFlow.Font = new Font("Georgia", 64F, FontStyle.Bold);
+        this.lblTitleFlow.Font = new Font("Georgia", 68F, FontStyle.Bold);
         this.lblTitleFlow.ForeColor = Palette.ParkGreen;
 
         // 
         // lblSubtitle
         // 
-        this.lblSubtitle.Size = new Size(880, 36);
-        this.lblSubtitle.Location = new Point(0, 185);
+        this.lblSubtitle.Size = new Size(960, 40);
+        this.lblSubtitle.Location = new Point(0, 140);
         this.lblSubtitle.Text = "Parking Lot Slot Allocator";
-        this.lblSubtitle.Font = new Font("Georgia", 22F, FontStyle.Regular);
+        this.lblSubtitle.Font = new Font("Georgia", 24F, FontStyle.Regular);
         this.lblSubtitle.ForeColor = Palette.Ink;
         this.lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
 
         // 
         // panelGreenRule (84x3 pixel divider)
         // 
-        this.panelGreenRule.Size = new Size(84, 3);
-        this.panelGreenRule.Location = new Point((880 - 84) / 2, 235);
+        this.panelGreenRule.Size = new Size(90, 3);
+        this.panelGreenRule.Location = new Point((960 - 90) / 2, 195);
         this.panelGreenRule.BackColor = Palette.ParkGreen;
 
         // 
         // lblTagline
         // 
-        this.lblTagline.Size = new Size(540, 50);
-        this.lblTagline.Location = new Point((880 - 540) / 2, 255);
+        this.lblTagline.Size = new Size(660, 50);
+        this.lblTagline.Location = new Point((960 - 660) / 2, 215);
         this.lblTagline.Text = "Skip the circling. Your spot is already waiting, and we'll show you the way there.";
-        this.lblTagline.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+        this.lblTagline.Font = new Font("Segoe UI", 13F, FontStyle.Regular);
         this.lblTagline.ForeColor = Palette.Muted;
         this.lblTagline.TextAlign = ContentAlignment.MiddleCenter;
 
         // 
         // btnEnterDetails
         // 
-        this.btnEnterDetails.Size = new Size(250, 56);
-        this.btnEnterDetails.Location = new Point((880 - 250) / 2, 330);
+        this.btnEnterDetails.Size = new Size(260, 58);
+        this.btnEnterDetails.Location = new Point((960 - 260) / 2, 295);
         this.btnEnterDetails.Text = "Enter car details   →";
-        this.btnEnterDetails.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        this.btnEnterDetails.Font = new Font("Segoe UI", 12.5F, FontStyle.Bold);
         this.btnEnterDetails.ForeColor = Color.White;
         this.btnEnterDetails.BackColor = Palette.Slate;
         this.btnEnterDetails.FlatStyle = FlatStyle.Flat;
@@ -303,7 +269,7 @@ partial class CoverForm
         // panelCarVisual (Top-down car graphic)
         // 
         this.panelCarVisual.Size = new Size(96, 48);
-        this.panelCarVisual.Location = new Point(560, 11);
+        this.panelCarVisual.Location = new Point(610, 11);
         this.panelCarVisual.BackColor = Color.Transparent;
 
         // 
@@ -317,7 +283,6 @@ partial class CoverForm
         this.panelTopBar.PerformLayout();
         this.panelLogoMark.ResumeLayout(false);
         this.panelHeroCenter.ResumeLayout(false);
-        this.panelKicker.ResumeLayout(false);
         this.panelTitleContainer.ResumeLayout(false);
         this.panelTitleContainer.PerformLayout();
         this.panelBottomStrip.ResumeLayout(false);
@@ -327,7 +292,7 @@ partial class CoverForm
 
     private void CreateBaysInContainer()
     {
-        int bayWidth = 92;
+        int bayWidth = 100;
         int totalWidth = bayWidth * 9;
         int startX = (this.ClientSize.Width - totalWidth) / 2;
 
@@ -344,7 +309,7 @@ partial class CoverForm
             {
                 Dock = DockStyle.Fill,
                 Text = i.ToString("D2"),
-                Font = new Font("Georgia", 14F, FontStyle.Bold),
+                Font = new Font("Georgia", 15F, FontStyle.Bold),
                 ForeColor = (i == 5) ? Palette.ParkGreen : Palette.Muted,
                 TextAlign = ContentAlignment.MiddleCenter
             };

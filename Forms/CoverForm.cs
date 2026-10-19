@@ -56,26 +56,6 @@ public partial class CoverForm : Form
             g.FillPath(brush, path);
         };
 
-        panelKicker.Paint += (s, e) =>
-        {
-            var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            var rect = new Rectangle(0, 0, panelKicker.Width - 1, panelKicker.Height - 1);
-            using var path = CreateRoundedRectangle(rect, 16);
-            using var brush = new SolidBrush(Color.FromArgb(220, 255, 255, 255));
-            using var pen = new Pen(Palette.Line, 1f);
-            g.FillPath(brush, path);
-            g.DrawPath(pen, path);
-        };
-
-        panelBlinkDot.Paint += (s, e) =>
-        {
-            var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            using var brush = new SolidBrush(Palette.ParkGreen);
-            g.FillEllipse(brush, 0, 0, panelBlinkDot.Width - 1, panelBlinkDot.Height - 1);
-        };
-
         btnEnterDetails.Paint += (s, e) =>
         {
             var g = e.Graphics;
@@ -141,11 +121,11 @@ public partial class CoverForm : Form
 
         // Soft ambient blob A at top left
         using var blobABrush = new SolidBrush(Color.FromArgb(90, 255, 255, 255));
-        g.FillEllipse(blobABrush, -120, -100, 380, 380);
+        g.FillEllipse(blobABrush, -120, -100, 420, 420);
 
         // Soft ambient blob B at bottom right
         using var blobBBrush = new SolidBrush(Color.FromArgb(60, 142, 149, 161));
-        g.FillEllipse(blobBBrush, Width - 240, Height - 260, 300, 300);
+        g.FillEllipse(blobBBrush, Width - 260, Height - 280, 340, 340);
     }
 
     private async void InitializeInteractiveRuntimeUi()
