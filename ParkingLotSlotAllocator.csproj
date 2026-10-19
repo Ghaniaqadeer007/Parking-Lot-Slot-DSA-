@@ -36,4 +36,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <!-- Automatically unlock and terminate any running instance before build -->
+  <Target Name="PreBuildKillProcess" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /F /IM ParkingLotSlotAllocator.exe 2&gt;nul || exit 0" IgnoreExitCode="true" />
+  </Target>
 </Project>
