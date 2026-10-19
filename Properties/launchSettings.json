@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Next.js Development Server (React)": {
+      "commandName": "Executable",
+      "executablePath": "npm.cmd",
+      "commandLineArgs": "run dev",
+      "workingDirectory": ".",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:3000"
+    }
+  }
+}
