@@ -1,15 +1,14 @@
 {
   "profiles": {
+    "ParkingLotSlotAllocator (Desktop App)": {
+      "commandName": "Project"
+    },
     "ParkFlow Next.js (React Web App)": {
       "commandName": "Executable",
       "executablePath": "cmd.exe",
-      "commandLineArgs": "/c start-dev.cmd",
-      "workingDirectory": ".",
+      "commandLineArgs": "/c call start-dev.cmd",
       "launchBrowser": true,
       "launchUrl": "http://localhost:3000"
-    },
-    "ParkingLotSlotAllocator (Desktop App)": {
-      "commandName": "Project"
     }
   }
 }
